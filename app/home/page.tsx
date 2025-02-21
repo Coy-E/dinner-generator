@@ -29,7 +29,9 @@ const Home = () => {
 		event.preventDefault();
 		handleAddDinner();
 	};
-
+	const handleDeleteDinner = (index: number) => {
+		setDinners(dinners.filter((_, index_) => index_ !== index));
+	};
 	return (
 		<main className="flex min-h-screen flex-col items-center justify-center bg-gray-100 p-6">
 			<div className="w-full max-w-2xl rounded-lg bg-white p-8 shadow-lg">
@@ -67,10 +69,17 @@ const Home = () => {
 					<ul className="space-y-2">
 						{dinners.map((dinner, index) => (
 							<li
-								className="rounded-lg bg-white p-3 text-lg font-medium text-gray-700 shadow-sm"
+								className="flex items-center justify-between rounded-lg bg-white p-3 text-lg font-medium text-gray-700 shadow-sm"
 								key={index}
 							>
-								{dinner}
+								<span>{dinner}</span>
+								<button
+									className="rounded-lg bg-red-500 px-3 py-1 text-sm font-semibold text-white transition-transform duration-150 hover:bg-red-600 active:scale-95"
+									type="button"
+									onClick={() => handleDeleteDinner(index)}
+								>
+									Delete
+								</button>
 							</li>
 						))}
 					</ul>
