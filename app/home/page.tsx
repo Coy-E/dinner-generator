@@ -6,48 +6,58 @@ const Home = () => {
 	const [dinners, setDinners] = useState<Array<string>>([]);
 
 	const handleAddDinner = () => {
-		setDinners([...dinners, dinnerInput]);
-		setDinnerInput("");
+		if (dinnerInput.trim()) {
+			setDinners([...dinners, dinnerInput]);
+			setDinnerInput("");
+		}
 	};
+
 	const handleFormSubmit = (event: React.FormEvent) => {
 		event.preventDefault();
 		handleAddDinner();
 	};
+
 	return (
-		<main className="flex min-h-screen flex-col items-center p-24">
-			<h1 className="text-start text-3xl font-bold">My Dinners</h1>
-			<div className="my-4 size-96 bg-black">
-				<form
-					className="flex flex-col items-center justify-between p-2"
-					onSubmit={handleFormSubmit}
-				>
-					<button
-						className="rounded bg-blue-500 px-4 py-2 font-bold text-white transition-transform duration-150 hover:bg-blue-700 active:scale-90"
-						type="button"
-					>
-						Generate Random Dinner
-					</button>
-					<div className="mt-4 flex w-full flex-row items-center justify-between">
-						<input
-							className="mr-2 w-full rounded px-4 py-2 text-black"
-							placeholder="Add Dinner Name"
-							type="text"
-							value={dinnerInput}
-							onChange={(event) => setDinnerInput(event.target.value)}
-						/>
+		<main className="flex min-h-screen flex-col items-center justify-center bg-gray-100 p-6">
+			<div className="w-full max-w-2xl rounded-lg bg-white p-8 shadow-lg">
+				<h1 className="mb-6 text-center text-4xl font-bold text-gray-800">
+					My Dinners
+				</h1>
+				<form className="mb-6" onSubmit={handleFormSubmit}>
+					<div className="flex flex-col space-y-4">
 						<button
-							className="rounded bg-blue-500 px-2 font-bold text-white transition-transform duration-150 hover:bg-blue-700 active:scale-90"
+							className="w-full rounded-lg bg-blue-600 px-4 py-2 font-semibold text-white transition-transform duration-150 hover:bg-blue-700 active:scale-95"
 							type="button"
-							onClick={handleAddDinner}
 						>
-							<span className="text-4xl">+</span>
+							Generate Random Dinner
 						</button>
+						<div className="flex items-center space-x-2">
+							<input
+								className="flex-1 rounded-lg border border-gray-300 px-4 py-2 text-gray-800 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200"
+								placeholder="Add Dinner Name"
+								type="text"
+								value={dinnerInput}
+								onChange={(event) => setDinnerInput(event.target.value)}
+							/>
+							<button
+								className="rounded-lg bg-blue-600 px-4 py-2 font-semibold text-white transition-transform duration-150 hover:bg-blue-700 active:scale-95"
+								type="button"
+								onClick={handleAddDinner}
+							>
+								<span className="text-2xl">+</span>
+							</button>
+						</div>
 					</div>
 				</form>
-				<div className="flex h-96 w-full flex-col overflow-y-auto break-words rounded bg-white p-2 text-black">
-					<ul className="w-full text-start text-2xl font-bold ">
+				<div className="h-96 overflow-y-auto rounded-lg border border-gray-200 bg-gray-50 p-4">
+					<ul className="space-y-2">
 						{dinners.map((dinner, index) => (
-							<li key={index}>{dinner}</li>
+							<li
+								className="rounded-lg bg-white p-3 text-lg font-medium text-gray-700 shadow-sm"
+								key={index}
+							>
+								{dinner}
+							</li>
 						))}
 					</ul>
 				</div>
@@ -55,4 +65,5 @@ const Home = () => {
 		</main>
 	);
 };
+
 export default Home;
