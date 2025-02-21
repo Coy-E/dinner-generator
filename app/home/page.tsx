@@ -6,12 +6,25 @@ const Home = () => {
 	const [dinners, setDinners] = useState<Array<string>>([]);
 
 	const handleAddDinner = () => {
-		if (dinnerInput.trim()) {
-			setDinners([...dinners, dinnerInput]);
-			setDinnerInput("");
+		if (!dinnerInput.trim()) {
+			alert("Please enter a valid dinner name.");
+			return;
 		}
+		if (dinners.includes(dinnerInput)) {
+			alert("This dinner is already in the list.");
+			return;
+		}
+		setDinners([...dinners, dinnerInput]);
+		setDinnerInput("");
 	};
-
+	const handleGenerateRandomDinner = () => {
+		if (dinners.length === 0) {
+			alert("Please add some dinners first.");
+			return;
+		}
+		const randomIndex = Math.floor(Math.random() * dinners.length);
+		alert(`Tonight's dinner: ${dinners[randomIndex]}`);
+	};
 	const handleFormSubmit = (event: React.FormEvent) => {
 		event.preventDefault();
 		handleAddDinner();
@@ -28,6 +41,7 @@ const Home = () => {
 						<button
 							className="w-full rounded-lg bg-blue-600 px-4 py-2 font-semibold text-white transition-transform duration-150 hover:bg-blue-700 active:scale-95"
 							type="button"
+							onClick={handleGenerateRandomDinner}
 						>
 							Generate Random Dinner
 						</button>
