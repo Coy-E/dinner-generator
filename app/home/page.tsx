@@ -1,5 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const Home = () => {
 	const [dinnerInput, setDinnerInput] = useState("");
@@ -8,24 +10,70 @@ const Home = () => {
 
 	const handleAddDinner = () => {
 		if (!dinnerInput.trim()) {
-			alert("Please enter a valid dinner name.");
+			toast.error("Please enter a valid dinner name.", {
+				position: "top-center",
+				autoClose: 3000,
+				hideProgressBar: false,
+				closeOnClick: true,
+				pauseOnHover: true,
+				draggable: true,
+				progress: undefined,
+				theme: "dark"
+			});
 			return;
 		}
 		if (dinners.includes(dinnerInput)) {
-			alert("This dinner is already in the list.");
+			toast.error("This dinner is already in the list.", {
+				position: "top-center",
+				autoClose: 3000,
+				hideProgressBar: false,
+				closeOnClick: true,
+				pauseOnHover: true,
+				draggable: true,
+				progress: undefined,
+				theme: "dark"
+			});
 			return;
 		}
 		setDinners([...dinners, dinnerInput]);
 		setDinnerInput("");
+		toast.success("Dinner added successfully!", {
+			position: "top-center",
+			autoClose: 3000,
+			hideProgressBar: false,
+			closeOnClick: true,
+			pauseOnHover: true,
+			draggable: true,
+			progress: undefined,
+			theme: "dark"
+		});
 	};
 
 	const handleGenerateRandomDinner = () => {
 		if (dinners.length === 0) {
-			alert("Please add some dinners first.");
+			toast.error("Please add some dinners first.", {
+				position: "top-center",
+				autoClose: 3000,
+				hideProgressBar: false,
+				closeOnClick: true,
+				pauseOnHover: true,
+				draggable: true,
+				progress: undefined,
+				theme: "dark"
+			});
 			return;
 		}
 		const randomIndex = Math.floor(Math.random() * dinners.length);
-		alert(`Tonight's dinner: ${dinners[randomIndex]}`);
+		toast.info(`Tonight's dinner: ${dinners[randomIndex]}`, {
+			position: "top-center",
+			autoClose: 5000,
+			hideProgressBar: false,
+			closeOnClick: true,
+			pauseOnHover: true,
+			draggable: true,
+			progress: undefined,
+			theme: "dark"
+		});
 	};
 
 	const handleFormSubmit = (event: React.FormEvent) => {
@@ -35,6 +83,16 @@ const Home = () => {
 
 	const handleDeleteDinner = (index: number) => {
 		setDinners(dinners.filter((_, index_) => index_ !== index));
+		toast.success("Dinner deleted successfully!", {
+			position: "top-center",
+			autoClose: 3000,
+			hideProgressBar: false,
+			closeOnClick: true,
+			pauseOnHover: true,
+			draggable: true,
+			progress: undefined,
+			theme: "dark"
+		});
 	};
 
 	useEffect(() => {
@@ -129,6 +187,8 @@ const Home = () => {
 					</ul>
 				</div>
 			</div>
+			{/* Toast Container */}
+			<ToastContainer aria-label="toast-container" />
 		</main>
 	);
 };
