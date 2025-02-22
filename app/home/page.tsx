@@ -3,9 +3,12 @@ import { useState, useEffect } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
+const MAX_TOASTS = 3;
+
 const notify = (message: string, type: "success" | "error" | "info") => {
-	if (toast.isActive("toast-container")) {
-		toast.dismiss("toast-container");
+	// Dismiss older toasts if the limit is reached
+	if (toast.isActive("toast-container-1")) {
+		toast.dismiss("toast-container-1");
 	}
 	if (toast.isActive("toast-container-2")) {
 		toast.dismiss("toast-container-2");
@@ -13,6 +16,8 @@ const notify = (message: string, type: "success" | "error" | "info") => {
 	if (toast.isActive("toast-container-3")) {
 		toast.dismiss("toast-container-3");
 	}
+
+	// Show the new toast
 	switch (type) {
 		case "success": {
 			toast.success(message, {
@@ -71,9 +76,7 @@ const Home = () => {
 	const [numberDinnersToGenerate, setNumberDinnersToGenerate] = useState(3);
 	const [allowDuplicates, setAllowDuplicates] = useState(false);
 	const [showPreferences, setShowPreferences] = useState(false);
-
-	// Toast notification limit
-	const MAX_TOASTS = 3;
+	const [showConfirmation, setShowConfirmation] = useState(false);
 
 	const handleAddDinner = () => {
 		if (!dinnerInput.trim()) {
@@ -131,12 +134,17 @@ const Home = () => {
 	};
 
 	const handleClearAllGeneratedDinners = () => {
-		if (
-			window.confirm("Are you sure you want to clear all generated dinners?")
-		) {
-			setGeneratedDinners([]);
-			notify("All generated dinners cleared!", "success");
-		}
+		setShowConfirmation(true);
+	};
+
+	const confirmClearAllGeneratedDinners = () => {
+		setGeneratedDinners([]);
+		setShowConfirmation(false);
+		notify("All generated dinners cleared!", "success");
+	};
+
+	const cancelClearAllGeneratedDinners = () => {
+		setShowConfirmation(false);
 	};
 
 	useEffect(() => {
@@ -333,6 +341,36 @@ const Home = () => {
 				limit={MAX_TOASTS}
 				theme="dark"
 			/>
+			{/* Confirmation Modal */}
+			{showConfirmation && (
+				<div className="fixed inset-0 flex items-center justify-center bg-black/50">
+					<div className="rounded-lg bg-gray-800 p-6 shadow-lg">
+						<h2 className="mb-4 text-xl font-bold text-orange-400">
+							Are you sure?
+						</h2>
+						<p className="mb-6 text-white">
+							This will clear all generated dinners. This action cannot be
+							undone.
+						</p>
+						<div className="flex justify-end space-x-4">
+							<button
+								className="rounded-lg bg-gray-600 px-4 py-2 text-white hover:bg-gray-700"
+								type="button"
+								onClick={cancelClearAllGeneratedDinners}
+							>
+								Cancel
+							</button>
+							<button
+								className="rounded-lg bg-red-600 px-4 py-2 text-white hover:bg-red-700"
+								type="button"
+								onClick={confirmClearAllGeneratedDinners}
+							>
+								Clear All
+							</button>
+						</div>
+					</div>
+				</div>
+			)}
 		</main>
 	);
 };
