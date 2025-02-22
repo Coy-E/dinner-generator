@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 const Home = () => {
 	const [dinnerInput, setDinnerInput] = useState("");
 	const [dinners, setDinners] = useState<Array<string>>([]);
+	const [searchQuery, setSearchQuery] = useState("");
 
 	const handleAddDinner = () => {
 		if (!dinnerInput.trim()) {
@@ -47,6 +48,11 @@ const Home = () => {
 		localStorage.setItem("dinners", JSON.stringify(dinners));
 	}, [dinners]);
 
+	// Filter dinners based on the search query
+	const filteredDinners = dinners.filter((dinner) =>
+		dinner.toLowerCase().includes(searchQuery.toLowerCase())
+	);
+
 	return (
 		<main className="flex min-h-screen flex-col items-center justify-center bg-gray-900 p-6">
 			<div className="w-full max-w-2xl rounded-lg bg-gray-800 p-8 shadow-lg">
@@ -80,23 +86,46 @@ const Home = () => {
 						</div>
 					</div>
 				</form>
+				{/* Search Bar */}
+				<div className="mb-4 flex items-center space-x-2">
+					<input
+						className="flex-1 rounded-lg border border-gray-600 bg-gray-700 px-4 py-2 text-white placeholder:text-gray-400 focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500"
+						placeholder="Search for a dinner..."
+						type="text"
+						value={searchQuery}
+						onChange={(event) => setSearchQuery(event.target.value)}
+					/>
+					{searchQuery && (
+						<button
+							className="rounded-lg bg-gray-600 px-4 py-2 text-sm font-semibold text-white transition-transform duration-150 hover:bg-gray-700 active:scale-95"
+							type="button"
+							onClick={() => setSearchQuery("")}
+						>
+							Clear
+						</button>
+					)}
+				</div>
 				<div className="h-96 overflow-y-auto rounded-lg border border-gray-700 bg-gray-700 p-4">
 					<ul className="space-y-2">
-						{dinners.map((dinner, index) => (
-							<li
-								className="flex items-center justify-between rounded-lg bg-gray-600 p-3 text-lg font-medium text-white shadow-sm"
-								key={index}
-							>
-								<span>{dinner}</span>
-								<button
-									className="rounded-lg bg-red-600 px-3 py-1 text-sm font-semibold text-white transition-transform duration-150 hover:bg-red-700 active:scale-95"
-									type="button"
-									onClick={() => handleDeleteDinner(index)}
+						{filteredDinners.length === 0 ? (
+							<p className="text-center text-gray-400">No dinners found.</p>
+						) : (
+							filteredDinners.map((dinner, index) => (
+								<li
+									className="flex items-center justify-between rounded-lg bg-gray-600 p-3 text-lg font-medium text-white shadow-sm"
+									key={index}
 								>
-									Delete
-								</button>
-							</li>
-						))}
+									<span>{dinner}</span>
+									<button
+										className="rounded-lg bg-red-600 px-3 py-1 text-sm font-semibold text-white transition-transform duration-150 hover:bg-red-700 active:scale-95"
+										type="button"
+										onClick={() => handleDeleteDinner(index)}
+									>
+										Delete
+									</button>
+								</li>
+							))
+						)}
 					</ul>
 				</div>
 			</div>
