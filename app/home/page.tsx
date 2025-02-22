@@ -3,6 +3,65 @@ import { useState, useEffect } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
+const notify = (message: string, type: "success" | "error" | "info") => {
+	if (toast.isActive("toast-container")) {
+		toast.dismiss("toast-container");
+	}
+	if (toast.isActive("toast-container-2")) {
+		toast.dismiss("toast-container-2");
+	}
+	if (toast.isActive("toast-container-3")) {
+		toast.dismiss("toast-container-3");
+	}
+	switch (type) {
+		case "success": {
+			toast.success(message, {
+				position: "top-center",
+				autoClose: 3000,
+				hideProgressBar: false,
+				closeOnClick: true,
+				pauseOnHover: true,
+				draggable: true,
+				progress: undefined,
+				theme: "dark",
+				toastId: `toast-container-${Math.random()}`
+			});
+			break;
+		}
+		case "error": {
+			toast.error(message, {
+				position: "top-center",
+				autoClose: 3000,
+				hideProgressBar: false,
+				closeOnClick: true,
+				pauseOnHover: true,
+				draggable: true,
+				progress: undefined,
+				theme: "dark",
+				toastId: `toast-container-${Math.random()}`
+			});
+			break;
+		}
+		case "info": {
+			toast.info(message, {
+				position: "top-center",
+				autoClose: 3000,
+				hideProgressBar: false,
+				closeOnClick: true,
+				pauseOnHover: true,
+				draggable: true,
+				progress: undefined,
+				theme: "dark",
+				toastId: `toast-container-${Math.random()}`
+			});
+			break;
+		}
+		default: {
+			break;
+		}
+	}
+};
+
 const Home = () => {
 	const [dinnerInput, setDinnerInput] = useState("");
 	const [dinners, setDinners] = useState<Array<string>>([]);
@@ -13,61 +72,27 @@ const Home = () => {
 	const [allowDuplicates, setAllowDuplicates] = useState(false);
 	const [showPreferences, setShowPreferences] = useState(false);
 
+	// Toast notification limit
+	const MAX_TOASTS = 3;
+
 	const handleAddDinner = () => {
 		if (!dinnerInput.trim()) {
-			toast.error("Please enter a valid dinner name.", {
-				position: "top-center",
-				autoClose: 3000,
-				hideProgressBar: false,
-				closeOnClick: true,
-				pauseOnHover: true,
-				draggable: true,
-				progress: undefined,
-				theme: "dark"
-			});
+			notify("Please enter a valid dinner name.", "error");
 			return;
 		}
-		// Case-insensitive check for duplicates
 		const lowerCaseDinners = dinners.map((dinner) => dinner.toLowerCase());
 		if (lowerCaseDinners.includes(dinnerInput.toLowerCase())) {
-			toast.error("This dinner is already in the list (case-insensitive).", {
-				position: "top-center",
-				autoClose: 3000,
-				hideProgressBar: false,
-				closeOnClick: true,
-				pauseOnHover: true,
-				draggable: true,
-				progress: undefined,
-				theme: "dark"
-			});
+			notify("This dinner is already in the list (case-insensitive).", "error");
 			return;
 		}
 		setDinners([...dinners, dinnerInput]);
 		setDinnerInput("");
-		toast.success("Dinner added successfully!", {
-			position: "top-center",
-			autoClose: 3000,
-			hideProgressBar: false,
-			closeOnClick: true,
-			pauseOnHover: true,
-			draggable: true,
-			progress: undefined,
-			theme: "dark"
-		});
+		notify("Dinner added successfully!", "success");
 	};
 
 	const handleGenerateDinners = () => {
 		if (dinners.length === 0) {
-			toast.error("Please add some dinners first.", {
-				position: "top-center",
-				autoClose: 3000,
-				hideProgressBar: false,
-				closeOnClick: true,
-				pauseOnHover: true,
-				draggable: true,
-				progress: undefined,
-				theme: "dark"
-			});
+			notify("Please add some dinners first.", "error");
 			return;
 		}
 		let availableDinners = [...dinners];
@@ -77,16 +102,7 @@ const Home = () => {
 			);
 		}
 		if (availableDinners.length === 0) {
-			toast.error("No unique dinners left to generate.", {
-				position: "top-center",
-				autoClose: 3000,
-				hideProgressBar: false,
-				closeOnClick: true,
-				pauseOnHover: true,
-				draggable: true,
-				progress: undefined,
-				theme: "dark"
-			});
+			notify("No unique dinners left to generate.", "error");
 			return;
 		}
 		const shuffledDinners = [...availableDinners].sort(
@@ -94,16 +110,7 @@ const Home = () => {
 		);
 		const selectedDinners = shuffledDinners.slice(0, numberDinnersToGenerate);
 		setGeneratedDinners([...generatedDinners, ...selectedDinners]);
-		toast.success(`Generated ${selectedDinners.length} dinners!`, {
-			position: "top-center",
-			autoClose: 3000,
-			hideProgressBar: false,
-			closeOnClick: true,
-			pauseOnHover: true,
-			draggable: true,
-			progress: undefined,
-			theme: "dark"
-		});
+		notify(`Generated ${selectedDinners.length} dinners!`, "success");
 	};
 
 	const handleFormSubmit = (event: React.FormEvent) => {
@@ -113,46 +120,23 @@ const Home = () => {
 
 	const handleDeleteDinner = (index: number) => {
 		setDinners(dinners.filter((_, index_) => index_ !== index));
-		toast.success("Dinner deleted successfully!", {
-			position: "top-center",
-			autoClose: 3000,
-			hideProgressBar: false,
-			closeOnClick: true,
-			pauseOnHover: true,
-			draggable: true,
-			progress: undefined,
-			theme: "dark"
-		});
+		notify("Dinner deleted successfully!", "success");
 	};
 
 	const handleDeleteGeneratedDinner = (index: number) => {
 		setGeneratedDinners(
 			generatedDinners.filter((_, index_) => index_ !== index)
 		);
-		toast.success("Generated dinner removed!", {
-			position: "top-center",
-			autoClose: 3000,
-			hideProgressBar: false,
-			closeOnClick: true,
-			pauseOnHover: true,
-			draggable: true,
-			progress: undefined,
-			theme: "dark"
-		});
+		notify("Generated dinner removed!", "success");
 	};
 
 	const handleClearAllGeneratedDinners = () => {
-		setGeneratedDinners([]);
-		toast.success("All generated dinners cleared!", {
-			position: "top-center",
-			autoClose: 3000,
-			hideProgressBar: false,
-			closeOnClick: true,
-			pauseOnHover: true,
-			draggable: true,
-			progress: undefined,
-			theme: "dark"
-		});
+		if (
+			window.confirm("Are you sure you want to clear all generated dinners?")
+		) {
+			setGeneratedDinners([]);
+			notify("All generated dinners cleared!", "success");
+		}
 	};
 
 	useEffect(() => {
@@ -340,7 +324,15 @@ const Home = () => {
 				</div>
 			</div>
 			{/* Toast Container */}
-			<ToastContainer aria-label="toast-container" />
+			<ToastContainer
+				closeOnClick
+				draggable
+				pauseOnHover
+				aria-label="toast-container"
+				autoClose={3000}
+				limit={MAX_TOASTS}
+				theme="dark"
+			/>
 		</main>
 	);
 };
