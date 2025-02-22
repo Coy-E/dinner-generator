@@ -9,6 +9,9 @@ const Home = () => {
 	const [searchQuery, setSearchQuery] = useState("");
 	const [generatedDinners, setGeneratedDinners] = useState<Array<string>>([]);
 	const [isPoolCollapsed, setIsPoolCollapsed] = useState(false);
+	const [numberDinnersToGenerate, setNumberDinnersToGenerate] = useState(3);
+	const [allowDuplicates, setAllowDuplicates] = useState(false);
+	const [showPreferences, setShowPreferences] = useState(false);
 
 	const handleAddDinner = () => {
 		if (!dinnerInput.trim()) {
@@ -24,8 +27,10 @@ const Home = () => {
 			});
 			return;
 		}
-		if (dinners.includes(dinnerInput)) {
-			toast.error("This dinner is already in the list.", {
+		// Case-insensitive check for duplicates
+		const lowerCaseDinners = dinners.map((dinner) => dinner.toLowerCase());
+		if (lowerCaseDinners.includes(dinnerInput.toLowerCase())) {
+			toast.error("This dinner is already in the list (case-insensitive).", {
 				position: "top-center",
 				autoClose: 3000,
 				hideProgressBar: false,
@@ -51,7 +56,7 @@ const Home = () => {
 		});
 	};
 
-	const handleGenerateRandomDinner = () => {
+	const handleGenerateDinners = () => {
 		if (dinners.length === 0) {
 			toast.error("Please add some dinners first.", {
 				position: "top-center",
@@ -65,24 +70,14 @@ const Home = () => {
 			});
 			return;
 		}
-		const randomIndex = Math.floor(Math.random() * dinners.length);
-		const selectedDinner = dinners[randomIndex];
-		setGeneratedDinners([...generatedDinners, selectedDinner]);
-		toast.info(`Added to generated dinners: ${selectedDinner}`, {
-			position: "top-center",
-			autoClose: 3000,
-			hideProgressBar: false,
-			closeOnClick: true,
-			pauseOnHover: true,
-			draggable: true,
-			progress: undefined,
-			theme: "dark"
-		});
-	};
-
-	const handleGenerateMultipleDinners = (count: number) => {
-		if (dinners.length === 0) {
-			toast.error("Please add some dinners first.", {
+		let availableDinners = [...dinners];
+		if (!allowDuplicates) {
+			availableDinners = availableDinners.filter(
+				(dinner) => !generatedDinners.includes(dinner)
+			);
+		}
+		if (availableDinners.length === 0) {
+			toast.error("No unique dinners left to generate.", {
 				position: "top-center",
 				autoClose: 3000,
 				hideProgressBar: false,
@@ -94,10 +89,12 @@ const Home = () => {
 			});
 			return;
 		}
-		const shuffledDinners = [...dinners].sort(() => 0.5 - Math.random());
-		const selectedDinners = shuffledDinners.slice(0, count);
+		const shuffledDinners = [...availableDinners].sort(
+			() => 0.5 - Math.random()
+		);
+		const selectedDinners = shuffledDinners.slice(0, numberDinnersToGenerate);
 		setGeneratedDinners([...generatedDinners, ...selectedDinners]);
-		toast.success(`Generated ${count} dinners!`, {
+		toast.success(`Generated ${selectedDinners.length} dinners!`, {
 			position: "top-center",
 			autoClose: 3000,
 			hideProgressBar: false,
@@ -180,14 +177,53 @@ const Home = () => {
 				<h1 className="mb-6 text-center text-4xl font-bold text-orange-400">
 					My Dinners
 				</h1>
+				{/* Preferences Menu */}
+				<div className="mb-4">
+					<button
+						className="rounded-lg bg-gray-700 px-4 py-2 text-white hover:bg-gray-600"
+						type="button"
+						onClick={() => setShowPreferences(!showPreferences)}
+					>
+						{showPreferences ? "Hide Preferences" : "Show Preferences"}
+					</button>
+					{showPreferences && (
+						<div className="mt-4 rounded-lg bg-gray-700 p-4">
+							<div className="mb-4">
+								<label className="block text-white">
+									Number of Dinners to Generate:
+								</label>
+								<input
+									className="mt-2 w-full rounded-lg border border-gray-600 bg-gray-800 px-4 py-2 text-white"
+									min={1}
+									type="number"
+									value={numberDinnersToGenerate}
+									onChange={(event) =>
+										setNumberDinnersToGenerate(
+											Number.parseInt(event.target.value, 10)
+										)
+									}
+								/>
+							</div>
+							<div className="flex items-center">
+								<input
+									checked={allowDuplicates}
+									className="mr-2"
+									type="checkbox"
+									onChange={() => setAllowDuplicates(!allowDuplicates)}
+								/>
+								<label className="text-white">Allow Duplicates</label>
+							</div>
+						</div>
+					)}
+				</div>
 				<form className="mb-6" onSubmit={handleFormSubmit}>
 					<div className="flex flex-col space-y-4">
 						<button
 							className="w-full rounded-lg bg-orange-600 px-4 py-2 font-semibold text-white transition-transform duration-150 hover:bg-orange-700 active:scale-95"
 							type="button"
-							onClick={handleGenerateRandomDinner}
+							onClick={handleGenerateDinners}
 						>
-							Generate Random Dinner
+							Generate {numberDinnersToGenerate} Dinners
 						</button>
 						<div className="flex items-center space-x-2">
 							<input
@@ -268,13 +304,6 @@ const Home = () => {
 						Generated Dinners
 					</h2>
 					<div className="flex flex-col space-y-2">
-						<button
-							className="w-full rounded-lg bg-orange-600 px-4 py-2 font-semibold text-white transition-transform duration-150 hover:bg-orange-700 active:scale-95"
-							type="button"
-							onClick={() => handleGenerateMultipleDinners(3)}
-						>
-							Generate 3 Dinners
-						</button>
 						<button
 							className="w-full rounded-lg bg-red-600 px-4 py-2 font-semibold text-white transition-transform duration-150 hover:bg-red-700 active:scale-95"
 							type="button"
