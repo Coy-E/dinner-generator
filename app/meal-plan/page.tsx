@@ -27,12 +27,12 @@ interface DinnerItem {
 
 const DAYS_OF_WEEK = [
 	"Monday",
-	"Sunday",
 	"Tuesday",
 	"Wednesday",
 	"Thursday",
 	"Friday",
-	"Saturday"
+	"Saturday",
+	"Sunday"
 ];
 
 const MealPlanPage = () => {
@@ -332,8 +332,169 @@ const MealPlanPage = () => {
 							</div>
 						</div>
 					)}
+					{/* Saved Meal Plans */}
+					{savedMealPlans.length > 0 && (
+						<div className="mb-6">
+							<h2 className="mb-3 text-xl font-semibold text-orange-400">
+								Saved Meal Plans
+							</h2>
+							<div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3">
+								{savedMealPlans.map((plan) => (
+									<div
+										className="flex cursor-pointer items-center justify-between rounded-lg bg-gray-700 p-3 transition hover:bg-gray-600"
+										key={plan.id}
+										onClick={() => loadMealPlan(plan.id)}
+									>
+										<span className="truncate font-medium text-white">
+											{plan.name}
+										</span>
+										<button
+											className="ml-2 text-red-400 hover:text-red-500 focus:outline-none"
+											type="button"
+											onClick={(event) => deleteMealPlan(plan.id, event)}
+										>
+											<span className="sr-only">Delete</span>
+											<svg
+												className="size-5"
+												fill="none"
+												stroke="currentColor"
+												viewBox="0 0 24 24"
+												xmlns="http://www.w3.org/2000/svg"
+											>
+												<path
+													d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+													strokeLinecap="round"
+													strokeLinejoin="round"
+													strokeWidth={2}
+												/>
+											</svg>
+										</button>
+									</div>
+								))}
+							</div>
+						</div>
+					)}
+
+					{/* Meal Plan Display */}
+					{mealPlan.length > 0 ? (
+						<div className="overflow-hidden rounded-lg bg-gray-700 shadow-md">
+							<table className="w-full text-white">
+								<thead className="bg-gray-800 text-left">
+									<tr>
+										<th className="px-4 py-3 font-semibold">Day</th>
+										<th className="px-4 py-3 font-semibold">Breakfast</th>
+										<th className="px-4 py-3 font-semibold">Lunch</th>
+										<th className="px-4 py-3 font-semibold">Dinner</th>
+									</tr>
+								</thead>
+								<tbody>
+									{mealPlan.map((day, index) => (
+										<tr className="border-t border-gray-600" key={day.id}>
+											<td className="px-4 py-3 font-medium">{day.day}</td>
+											<td className="px-4 py-3">
+												<div className="flex items-center">
+													<span className="mr-2">{day.breakfast}</span>
+													<button
+														className="ml-auto text-gray-400 hover:text-orange-400"
+														title="Regenerate breakfast"
+														type="button"
+														onClick={() => regenerateMeal(index, "breakfast")}
+													>
+														<svg
+															className="size-4"
+															fill="none"
+															stroke="currentColor"
+															viewBox="0 0 24 24"
+															xmlns="http://www.w3.org/2000/svg"
+														>
+															<path
+																d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+																strokeLinecap="round"
+																strokeLinejoin="round"
+																strokeWidth={2}
+															/>
+														</svg>
+													</button>
+												</div>
+											</td>
+											<td className="px-4 py-3">
+												<div className="flex items-center">
+													<span className="mr-2">{day.lunch}</span>
+													<button
+														className="ml-auto text-gray-400 hover:text-orange-400"
+														title="Regenerate lunch"
+														type="button"
+														onClick={() => regenerateMeal(index, "lunch")}
+													>
+														<svg
+															className="size-4"
+															fill="none"
+															stroke="currentColor"
+															viewBox="0 0 24 24"
+															xmlns="http://www.w3.org/2000/svg"
+														>
+															<path
+																d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+																strokeLinecap="round"
+																strokeLinejoin="round"
+																strokeWidth={2}
+															/>
+														</svg>
+													</button>
+												</div>
+											</td>
+											<td className="px-4 py-3">
+												<div className="flex items-center">
+													<span className="mr-2">{day.dinner}</span>
+													<button
+														className="ml-auto text-gray-400 hover:text-orange-400"
+														title="Regenerate dinner"
+														type="button"
+														onClick={() => regenerateMeal(index, "dinner")}
+													>
+														<svg
+															className="size-4"
+															fill="none"
+															stroke="currentColor"
+															viewBox="0 0 24 24"
+															xmlns="http://www.w3.org/2000/svg"
+														>
+															<path
+																d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+																strokeLinecap="round"
+																strokeLinejoin="round"
+																strokeWidth={2}
+															/>
+														</svg>
+													</button>
+												</div>
+											</td>
+										</tr>
+									))}
+								</tbody>
+							</table>
+						</div>
+					) : (
+						<div className="rounded-lg bg-gray-700 p-8 text-center">
+							<p className="mb-4 text-gray-300">No meal plan generated yet.</p>
+							<p className="text-sm text-gray-400">
+								Generate a meal plan to see your daily breakfast, lunch, and
+								dinner suggestions.
+							</p>
+						</div>
+					)}
 				</div>
 			</div>
+			<ToastContainer
+				closeOnClick
+				draggable
+				pauseOnHover
+				aria-label="Notification container"
+				autoClose={3000}
+				theme="dark"
+			/>
 		</div>
 	);
 };
+
+export default MealPlanPage;

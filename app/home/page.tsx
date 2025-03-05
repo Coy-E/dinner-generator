@@ -64,8 +64,6 @@ interface DinnerItem {
 	isPinned: boolean;
 }
 
-type MealType = "breakfast" | "lunch" | "dinner";
-
 const Home = () => {
 	// State management
 	const [dinnerInput, setDinnerInput] = useState("");
@@ -74,12 +72,10 @@ const Home = () => {
 	const [generatedDinners, setGeneratedDinners] = useState<Array<DinnerItem>>(
 		[]
 	);
-	const [isPoolCollapsed, setIsPoolCollapsed] = useState(false);
 	const [numberDinnersToGenerate, setNumberDinnersToGenerate] = useState(3);
 	const [allowDuplicates, setAllowDuplicates] = useState(false);
 	const [showPreferences, setShowPreferences] = useState(false);
 	const [showConfirmation, setShowConfirmation] = useState(false);
-	const [mealTypeFilter, setMealTypeFilter] = useState<MealType>("dinner");
 	const [showSuggestions, setShowSuggestions] = useState(false);
 	const [activeTab, setActiveTab] = useState<"pool" | "generated" | "stats">(
 		"pool"
@@ -158,6 +154,13 @@ const Home = () => {
 		// Switch to the generated tab to show the results
 		setActiveTab("generated");
 	};
+
+	{
+		/* Stats Tab */
+	}
+	{
+		activeTab === "stats" && <StatsComponent />;
+	}
 
 	// Handle form submission
 	const handleFormSubmit = (event: React.FormEvent) => {
@@ -689,7 +692,7 @@ const Home = () => {
 								</div>
 							) : (
 								<ul className="space-y-2">
-									{generatedDinners.map((dinner, index) => (
+									{generatedDinners.map((dinner) => (
 										<li
 											className="flex items-center justify-between rounded-lg bg-gray-800 p-3 shadow-sm transition hover:bg-gray-700"
 											key={dinner.id}
